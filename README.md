@@ -37,3 +37,6 @@ How it works:
 3. LCD display showing messages about signals or telling that it turned signals automaticly.
 4. Arduino, which will process all the data from sencors.
 
+   Figma prototype:
+   https://www.figma.com/make/PTxOCge5ynBWiqzrU7gNiY/Predictive-Turn-Signal-System?t=OqBM5mT6Uw6nLtTD-1
+
