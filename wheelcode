@@ -1,0 +1,145 @@
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+rgb_lcd lcd;
+
+//  Пины 
+const int rotaryPin = A0;     // потенциометр / руль
+const int button1Pin = 2;     // левая лампа
+const int button2Pin = 3;     // правая лампа
+const int helpButtonPin = 6;  // третья кнопка Help ON/OFF (можно D6)
+const int bulb1Pin = 7;       // лампа 1
+const int bulb2Pin = 8;       // лампа 2
+
+//  Флаги состояния
+bool manualLamp1 = false;
+bool manualLamp2 = false;
+bool autoLamp1 = false;
+bool autoLamp2 = false;
+bool helpEnabled = true;  // включена помощь по умолчанию
+
+// Последние состояния кнопок
+bool lastButton1State = HIGH;
+bool lastButton2State = HIGH;
+bool lastHelpButtonState = HIGH;
+
+//  Настройки зон 
+const int centerValue = 512;
+const int warningZone = 120;   // жёлтая зона
+const int dangerZone = 300;    // красная зона
+
+//  Setup
+void setup() {
+  pinMode(button1Pin, INPUT_PULLUP);
+  pinMode(button2Pin, INPUT_PULLUP);
+  pinMode(helpButtonPin, INPUT_PULLUP);
+
+  pinMode(bulb1Pin, OUTPUT);
+  pinMode(bulb2Pin, OUTPUT);
+
+  // Лампочки выключены по умолчанию
+  digitalWrite(bulb1Pin, LOW);
+  digitalWrite(bulb2Pin, LOW);
+
+  // Сбрасываем флаги
+  manualLamp1 = false;
+  manualLamp2 = false;
+  autoLamp1 = false;
+  autoLamp2 = false;
+
+  lcd.begin(16, 2);
+  lcd.setRGB(0, 255, 0);
+  lcd.print("CENTER          ");
+}
+
+//  Loop 
+void loop() {
+  //  Проверка кнопок 
+  bool currentButton1State = digitalRead(button1Pin);
+  if (currentButton1State == LOW && lastButton1State == HIGH) {
+    manualLamp1 = !manualLamp1;
+    delay(200);
+  }
+  lastButton1State = currentButton1State;
+
+  bool currentButton2State = digitalRead(button2Pin);
+  if (currentButton2State == LOW && lastButton2State == HIGH) {
+    manualLamp2 = !manualLamp2;
+    delay(200);
+  }
+  lastButton2State = currentButton2State;
+
+  bool currentHelpButtonState = digitalRead(helpButtonPin);
+  if (currentHelpButtonState == LOW && lastHelpButtonState == HIGH) {
+    helpEnabled = !helpEnabled; // переключаем включение помощи
+    delay(200);
+  }
+  lastHelpButtonState = currentHelpButtonState;
+
+  // Чтение потенциометра 
+  int value = analogRead(rotaryPin);
+  int deviation = value - centerValue;
+
+  lcd.setCursor(0, 0);
+
+  //  Если помощь выключена 
+  if (!helpEnabled) {
+    digitalWrite(bulb1Pin, manualLamp1 ? HIGH : LOW);
+    digitalWrite(bulb2Pin, manualLamp2 ? HIGH : LOW);
+
+    lcd.setRGB(0, 255, 0);
+    lcd.print("HELP OFF       ");
+  } 
+  else {
+    //  Центр 
+    if (abs(deviation) < warningZone) {
+      lcd.setRGB(0, 255, 0);
+      lcd.print("CENTER          ");
+
+      // Автолампы выключаем при возврате к центру
+      if (autoLamp1) { autoLamp1 = false; digitalWrite(bulb1Pin, LOW); }
+      if (autoLamp2) { autoLamp2 = false; digitalWrite(bulb2Pin, LOW); }
+
+      digitalWrite(bulb1Pin, manualLamp1 ? HIGH : LOW);
+      digitalWrite(bulb2Pin, manualLamp2 ? HIGH : LOW);
+    }
+    // Жёлтая зона 
+    else if (abs(deviation) < dangerZone) {
+      lcd.setRGB(255, 200, 0);
+      lcd.print("WARNING         ");
+
+      digitalWrite(bulb1Pin, manualLamp1 ? HIGH : LOW);
+      digitalWrite(bulb2Pin, manualLamp2 ? HIGH : LOW);
+    }
+    // Красная зона 
+    else {
+      if (deviation < 0) {
+        // Влево → левая лампа
+        if (!manualLamp1 && !autoLamp1) autoLamp1 = true; // включаем автоматически
+        digitalWrite(bulb1Pin, (manualLamp1 || autoLamp1) ? HIGH : LOW);
+        digitalWrite(bulb2Pin, manualLamp2 ? HIGH : LOW);
+
+        if (manualLamp1) lcd.setRGB(0, 255, 0); // зелёный если пользователь включил лампу
+        else lcd.setRGB(255, 0, 0);             // красный если лампа ещё не включена
+
+        lcd.setCursor(0, 0);
+        lcd.print(manualLamp1 ? "GOOD TO GO      " : "DANGER          ");
+      } 
+      else {
+        // Вправо → правая лампа
+        if (!manualLamp2 && !autoLamp2) autoLamp2 = true; // включаем автоматически
+        digitalWrite(bulb2Pin, (manualLamp2 || autoLamp2) ? HIGH : LOW);
+        digitalWrite(bulb1Pin, manualLamp1 ? HIGH : LOW);
+
+        if (manualLamp2) lcd.setRGB(0, 255, 0);
+        else lcd.setRGB(255, 0, 0);
+
+        lcd.setCursor(0, 0);
+        lcd.print(manualLamp2 ? "GOOD TO GO      " : "DANGER          ");
+      }
+    }
+  }
+
+  delay(50);
+}
+//UNO R4
