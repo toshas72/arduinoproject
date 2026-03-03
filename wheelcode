@@ -123,13 +123,13 @@ void loop() {
         autoLamp1 = true;
         autoLamp2 = false;
 
-        
+        // Если пользователь сам включил
         if (manualLamp1) {
           lcd.setRGB(0, 255, 0);
           lcd.print("GOOD TO GO      ");
         } else {
           lcd.setRGB(255, 0, 0);
-          lcd.print("DANGER LEFT     ");
+          lcd.print("DANGER RIGHT     ");
         }
       }
       else {
@@ -141,7 +141,7 @@ void loop() {
           lcd.print("GOOD TO GO      ");
         } else {
           lcd.setRGB(255, 0, 0);
-          lcd.print("DANGER RIGHT    ");
+          lcd.print("DANGER LEFT    ");
         }
       }
     }
@@ -165,5 +165,3 @@ void loop() {
 
   delay(50);
 }
-//UNO R4
-//Seeed RGB LCD
