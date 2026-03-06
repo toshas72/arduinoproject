@@ -1,0 +1,76 @@
+Smart Turn Signal System
+
+Team Members:
+Andrii Bahlai — S00289901@atu.ie
+Anton Divin — S00291478@atu.ie
+Artur Polishchuk — S00291600@atu.ie
+Omar Saadia — S00285581@atu.ie
+
+Links: 
+Trello Board: https://trello.com/b/frJRkGZl/smart-turn-signal-system 
+GitHub Repository: https://github.com/toshas72/arduinoproject
+
+Problem Outline:
+Road safety remains a critical global challenge, and one of the most overlooked causes of collisions is the failure of drivers to use turn signals.
+Many drivers forget to use turn signals… Failure to signal causes millions of accidents annually… Young drivers (18–24) are especially prone.
+This behaviour reduces predictability on the road and increases the likelihood of side‑impact and merging accidents.
+The issue is strongly connected to the UN Sustainable Development Goal 3: Good Health and Well‑Being,
+specifically the target of reducing road traffic injuries. Improving signalling compliance directly contributes to safer mobility and fewer preventable accidents.
+
+Summary of the Solution:
+The Smart Turn Signal System is designed to improve driver behaviour by automatically activating turn signals when the driver forgets to use them.
+As stated in the presentation, the system “detects sharp steering movements and automatically activates the left or right turn signal if the driver forgets to use it.”
+
+1.Steering Acceleration Detection  
+A sensor monitors the steering wheel’s angular acceleration. When a threshold is exceeded, the system interprets this as a turning manoeuvre.
+2.Automatic Signal Activation  
+If the driver has not manually activated the turn signal, the system triggers the corresponding LED indicator.
+3.Driver Feedback  
+An LCD display provides real‑time messages, such as:
+Left signal activated automatically
+Right signal activated automatically
+Manual signal detected
+4.Processing Unit  
+An Arduino microcontroller collects sensor data, evaluates steering behaviour, and controls the LEDs and LCD
+
+!!!Technologies Used!!!
+- Arduino Uno or similar microcontroller
+- Steering acceleration sensor (e.g., accelerometer/gyroscope)
+- LED indicators simulating turn signals
+- LCD display for user feedback
+- Basic wiring and breadboard prototyping
+
+Project Requirements 
+1.The system must detect steering acceleration in real time.
+2.The system must automatically activate the correct turn signal when the driver fails to do so.
+3.The system must display feedback messages on an LCD screen.
+4.The system must simulate turn signals using LEDs.
+5.The Arduino must process sensor data with minimal latency.
+6.The system must operate reliably during repeated steering events.
+7.The system must allow manual override (manual signalling takes priority).
+8.The system must function on low power suitable for automotive environments.
+
+Initial Design:
+Early Sketches
+The presentation notes: “Our prototype made in Figma, based on sketch.”   
+These sketches illustrate the placement of sensors, LEDs, and the display.
+
+Hardware Connection Diagram
+Accelerometer connected to Arduino analog/digital pins
+- LEDs connected through resistors to digital output pins
+- LCD connected via I2C or parallel interface
+- Power supplied through USB or 12V‑to‑5V converter
+- Code Architecture
+- Sensor Module: Reads steering acceleration
+- Decision Module: Determines whether a turn is occurring
+- Signal Module: Activates LEDs
+- Display Module: Sends messages to LCD
+- Main Loop: Coordinates timing and logic
+ Data was not collected yet so its gonna be our improvement
+
+Future Improvements :
+The current prototype demonstrates core functionality, but several enhancements could significantly improve performance and scalability:
+- Potential Enhancements
+1. Add wifi collector
+2. data collector
+3. get new idias with lectures 
